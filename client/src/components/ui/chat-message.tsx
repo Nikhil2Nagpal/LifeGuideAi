@@ -4,9 +4,10 @@ import type { Message } from "@shared/schema";
 interface ChatMessageProps {
   message: Message;
   className?: string;
+  onSuggestionClick?: (suggestion: string) => void;
 }
 
-export function ChatMessage({ message, className }: ChatMessageProps) {
+export function ChatMessage({ message, className, onSuggestionClick }: ChatMessageProps) {
   const isUser = message.role === 'user';
   
   return (
@@ -35,7 +36,7 @@ export function ChatMessage({ message, className }: ChatMessageProps) {
           {message.content}
         </p>
         
-        {message.metadata?.urgency === 'emergency' && !isUser && (
+        {message.metadata && message.metadata.urgency === 'emergency' && !isUser && (
           <div className="mt-2 p-2 bg-red-500/20 border border-red-500/30 rounded-lg">
             <div className="flex items-center space-x-2">
               <i className="fas fa-exclamation-triangle text-red-400"></i>
@@ -44,13 +45,14 @@ export function ChatMessage({ message, className }: ChatMessageProps) {
           </div>
         )}
         
-        {message.metadata?.suggestions && message.metadata.suggestions.length > 0 && !isUser && (
+        {message.metadata && message.metadata.suggestions && message.metadata.suggestions.length > 0 && !isUser && (
           <div className="mt-3 space-y-1">
             <p className="text-xs text-gray-400">Suggestions:</p>
-            {message.metadata.suggestions.map((suggestion: string, index: number) => (
+            {message.metadata.suggestions?.map((suggestion: string, index: number) => (
               <button
                 key={index}
-                className="block w-full text-left text-xs p-2 glass-effect rounded-lg hover:bg-white/10 transition-colors"
+                onClick={() => onSuggestionClick?.(suggestion)}
+                className="block w-full text-left text-xs p-2 glass-effect rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
                 data-testid={`suggestion-${index}`}
               >
                 {suggestion}

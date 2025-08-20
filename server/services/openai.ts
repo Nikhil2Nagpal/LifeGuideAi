@@ -23,6 +23,37 @@ export class AIService {
     const lowerMessage = message.toLowerCase();
     
     if (mode === 'career') {
+      // Skill development specific response
+      if (lowerMessage.includes('skill development') || lowerMessage.includes('learn') || lowerMessage.includes('new skill')) {
+        return {
+          content: `Excellent question about skill development! Here's a comprehensive guide:
+
+**Top Skills for 2024-2025:**
+- **AI & Machine Learning**: Python, TensorFlow, Data Analysis
+- **Web Development**: React, Node.js, Full-stack development  
+- **Digital Marketing**: SEO, Social Media, Content Creation
+- **Cloud Computing**: AWS, Azure, DevOps
+- **Data Science**: SQL, Python, Data Visualization
+
+**How to Learn Effectively:**
+1. Choose 1-2 skills based on your career goals
+2. Use online platforms (Coursera, Udemy, YouTube)
+3. Practice with real projects
+4. Build a portfolio to showcase your work
+5. Network with professionals in your field
+
+**Timeline**: Most skills can be learned in 3-6 months with consistent practice.
+
+Which specific skill interests you most?`,
+          metadata: {
+            mode: 'career',
+            confidence: 0.95,
+            suggestions: ["Learn Python programming", "Start with web development", "Explore digital marketing"],
+            urgency: 'medium'
+          }
+        };
+      }
+      
       if (lowerMessage.includes('12th') || lowerMessage.includes('after 12th') || lowerMessage.includes('stream')) {
         return {
           content: `Great question about your career path after 12th! Based on your interests in Engineering, Medical, Commerce, Arts, and IT, here's my analysis:
@@ -70,8 +101,9 @@ What programming languages are you currently familiar with?`,
       }
     }
     
-    // More contextual responses based on message content
-    if (lowerMessage.includes('job') || lowerMessage.includes('work') || lowerMessage.includes('career')) {
+    
+    // Check for general career/job questions outside mode-specific checks
+    if ((mode === 'career' || mode === 'dual') && (lowerMessage.includes('job') || lowerMessage.includes('work'))) {
       return {
         content: `I can help you with your career question! Here's what I recommend:
 
@@ -104,8 +136,73 @@ What specific career challenge are you facing right now?`,
       "Welcome! I'm your career advisor ready to help with job searching, professional development, salary negotiations, and career planning. What brings you here today?"
     ];
     
-    // More specific health responses
+    // More specific health responses  
     if (mode === 'health') {
+      // Fever specific response
+      if (lowerMessage.includes('fever') || lowerMessage.includes('temperature') || lowerMessage.includes('hot') || lowerMessage.includes('burning')) {
+        return {
+          content: `I understand you're feeling unwell with fever symptoms. Here's general guidance:
+
+**For Fever Management:**
+- **Rest**: Stay in bed and avoid physical activity
+- **Hydration**: Drink plenty of fluids (water, herbal tea, clear broths)
+- **Cool Environment**: Use fans, light clothing, cool compresses
+- **Monitor Temperature**: Check every 2-3 hours
+- **Over-the-counter**: Acetaminophen or ibuprofen as directed
+
+**When to Seek Immediate Medical Care:**
+- Fever above 103°F (39.4°C)
+- Difficulty breathing or chest pain
+- Severe headache or neck stiffness
+- Persistent vomiting
+- Signs of dehydration
+
+**Important**: This is general information only. For persistent or high fever, please consult a healthcare provider immediately.
+
+How are you feeling right now? Any other symptoms?`,
+          metadata: {
+            mode: 'health',
+            confidence: 0.9,
+            suggestions: ["Rest and stay hydrated", "Monitor temperature", "Consult doctor if severe"],
+            urgency: 'high'
+          }
+        };
+      }
+      
+      // Diet specific response
+      if (lowerMessage.includes('diet') || lowerMessage.includes('nutrition') || lowerMessage.includes('food') || lowerMessage.includes('eating')) {
+        return {
+          content: `Great question about nutrition! Here's a comprehensive diet guide:
+
+**Balanced Diet Basics:**
+- **Fruits & Vegetables**: 5-7 servings daily (colorful variety)
+- **Whole Grains**: Brown rice, quinoa, oats, whole wheat
+- **Lean Proteins**: Fish, chicken, legumes, nuts, seeds
+- **Healthy Fats**: Avocado, olive oil, nuts, fish
+- **Hydration**: 8-10 glasses of water daily
+
+**Meal Planning Tips:**
+1. Plan your meals weekly
+2. Prep ingredients in advance
+3. Include protein in every meal
+4. Limit processed foods and sugar
+5. Eat mindfully and slowly
+
+**For Specific Goals:**
+- **Weight Loss**: Create calorie deficit, increase fiber
+- **Muscle Gain**: Higher protein, regular meals
+- **Energy Boost**: Complex carbs, balanced meals
+
+What specific nutrition goal are you working towards?`,
+          metadata: {
+            mode: 'health',
+            confidence: 0.9,
+            suggestions: ["Plan balanced meals", "Increase water intake", "Limit processed foods"],
+            urgency: 'low'
+          }
+        };
+      }
+      
       if (lowerMessage.includes('headache') || lowerMessage.includes('pain') || lowerMessage.includes('hurt')) {
         return {
           content: `I understand you're experiencing discomfort. Here are some general wellness tips for common issues:

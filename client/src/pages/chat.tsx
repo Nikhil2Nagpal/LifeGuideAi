@@ -248,7 +248,12 @@ export default function Chat() {
               <div className="space-y-4" data-testid="chat-messages">
                 {messages.map((message) => (
                   <div key={message.id} className="group relative">
-                    <ChatMessage message={message} />
+                    <ChatMessage 
+                      message={message}
+                      onSuggestionClick={(suggestion) => {
+                        setInputValue(suggestion);
+                      }}
+                    />
                     {message.role === 'assistant' && (
                       <Button
                         variant="ghost"
