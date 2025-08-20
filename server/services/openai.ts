@@ -70,11 +70,38 @@ What programming languages are you currently familiar with?`,
       }
     }
     
+    // More contextual responses based on message content
+    if (lowerMessage.includes('job') || lowerMessage.includes('work') || lowerMessage.includes('career')) {
+      return {
+        content: `I can help you with your career question! Here's what I recommend:
+
+**For Job Searching:**
+- Update your resume with quantifiable achievements
+- Optimize your LinkedIn profile 
+- Network actively in your industry
+- Practice interview skills regularly
+
+**For Career Growth:**
+- Identify skill gaps in your field
+- Seek mentorship opportunities
+- Take on challenging projects
+- Consider relevant certifications
+
+What specific career challenge are you facing right now?`,
+        metadata: {
+          mode: 'career',
+          confidence: 0.9,
+          suggestions: ["Update resume", "Improve LinkedIn", "Practice interviews"],
+          urgency: 'low'
+        }
+      };
+    }
+    
     // Default responses as fallback
     const careerResponses = [
-      "Based on your question, I recommend focusing on developing your technical skills and building a strong portfolio. Consider learning in-demand technologies like AI, cloud computing, or data analysis. Would you like specific suggestions for your field?",
-      "Great career question! I'd suggest updating your resume to highlight your achievements with quantifiable results. Also, networking through LinkedIn and industry events can open many doors. What specific role are you targeting?",
-      "For career advancement, consider taking on leadership opportunities in your current role, obtaining relevant certifications, and building relationships with mentors in your industry. What's your current career stage?"
+      "I'm here to help with your career questions! Whether it's job searching, skill development, interview preparation, or career planning, I can provide personalized guidance. What specific area would you like to focus on?",
+      "Great to connect with you! I specialize in career guidance and can help with resume building, job market insights, skill development, and career transitions. What's your current career goal?",
+      "Welcome! I'm your career advisor ready to help with job searching, professional development, salary negotiations, and career planning. What brings you here today?"
     ];
     
     const healthResponses = [

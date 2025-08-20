@@ -106,7 +106,9 @@ export default function Chat() {
 
   const handleSendMessage = useCallback(async (message: string = inputValue) => {
     const trimmedMessage = message.trim();
-    if (!trimmedMessage) return;
+    if (!trimmedMessage || isTyping) return;
+
+    console.log('Sending message:', trimmedMessage, 'Mode:', currentMode);
 
     // Add user message
     const userMessage: Message = {
@@ -123,67 +125,56 @@ export default function Chat() {
     setIsTyping(true);
 
     try {
-      if (isConnected) {
-        // Send via WebSocket
-        sendMessage({
-          type: 'chat',
+      // Always use REST API for reliability
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           message: trimmedMessage,
           mode: currentMode,
           conversationId
-        });
-      } else {
-        // Fallback to REST API
-        console.log('WebSocket not connected, using REST API fallback');
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message: trimmedMessage,
-            mode: currentMode,
-            conversationId
-          }),
-        });
+        }),
+      });
 
-        if (!response.ok) {
-          throw new Error('Failed to send message');
-        }
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
 
-        const aiResponse = await response.json();
-        setIsTyping(false);
-        
-        // Create AI message
-        const aiMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          conversationId: conversationId || null,
-          role: 'assistant',
-          content: aiResponse.content || 'Sorry, I encountered an error processing your request.',
-          metadata: aiResponse.metadata,
-          createdAt: new Date()
-        };
-        
-        setMessages(prev => [...prev, aiMessage]);
-        
-        // Handle emergency alerts
-        if (aiResponse.metadata?.urgency === 'emergency') {
-          toast({
-            title: "Emergency Alert",
-            description: "Please seek immediate medical attention.",
-            variant: "destructive"
-          });
-        }
+      const aiResponse = await response.json();
+      setIsTyping(false);
+      
+      // Create AI message
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        conversationId: conversationId || null,
+        role: 'assistant',
+        content: aiResponse.content || 'Sorry, I encountered an error processing your request.',
+        metadata: aiResponse.metadata,
+        createdAt: new Date()
+      };
+      
+      setMessages(prev => [...prev, aiMessage]);
+      
+      // Handle emergency alerts
+      if (aiResponse.metadata?.urgency === 'emergency') {
+        toast({
+          title: "Emergency Alert",
+          description: "Please seek immediate medical attention.",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error('Error sending message:', error);
       setIsTyping(false);
       toast({
-        title: "Error",
+        title: "Connection Error",
         description: "Failed to send your message. Please try again.",
         variant: "destructive"
       });
     }
-  }, [inputValue, isConnected, sendMessage, currentMode, conversationId, toast]);
+  }, [inputValue, currentMode, conversationId, toast, isTyping]);
 
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -251,8 +242,8 @@ export default function Chat() {
                 <h1 className="font-semibold">
                   {currentMode === 'career' ? 'CareerBot' : currentMode === 'health' ? 'HealthBot' : 'AI Assistant'}
                 </h1>
-                <p className="text-xs text-gray-400">
-                  {isConnected ? 'Real-time Chat Active' : 'Standard Chat Mode'}
+                <p className="text-xs text-green-400">
+                  AI Chat Ready
                 </p>
               </div>
             </div>
@@ -362,12 +353,16 @@ export default function Chat() {
               </div>
               
               <Button
+                type="button"
                 onClick={(e) => {
                   e.preventDefault();
-                  handleSendMessage();
+                  e.stopPropagation();
+                  if (!isTyping && inputValue.trim()) {
+                    handleSendMessage();
+                  }
                 }}
                 disabled={!inputValue.trim() || isTyping}
-                className="bg-gradient-to-r from-medical-blue to-career-gold hover:from-medical-blue-dark hover:to-career-gold-dark text-white disabled:opacity-50"
+                className="bg-gradient-to-r from-medical-blue to-career-gold hover:from-medical-blue-dark hover:to-career-gold-dark text-white disabled:opacity-50 min-w-[80px]"
                 data-testid="button-send"
               >
                 <i className="fas fa-paper-plane mr-2"></i>
