@@ -16,8 +16,51 @@ export interface AIResponse {
 }
 
 export class AIService {
+  private isDemoMode = true; // Force demo mode due to API quota exceeded
+  
+  private generateDemoResponse(message: string, mode: 'career' | 'health' | 'dual'): AIResponse {
+    const careerResponses = [
+      "Based on your question, I recommend focusing on developing your technical skills and building a strong portfolio. Consider learning in-demand technologies like AI, cloud computing, or data analysis. Would you like specific suggestions for your field?",
+      "Great career question! I'd suggest updating your resume to highlight your achievements with quantifiable results. Also, networking through LinkedIn and industry events can open many doors. What specific role are you targeting?",
+      "For career advancement, consider taking on leadership opportunities in your current role, obtaining relevant certifications, and building relationships with mentors in your industry. What's your current career stage?"
+    ];
+    
+    const healthResponses = [
+      "Thank you for your health question. For general wellness, maintaining a balanced diet, regular exercise, and adequate sleep are fundamental. However, for specific health concerns, please consult with a healthcare professional. What aspect of health would you like to discuss?",
+      "I understand your health concern. While I can provide general wellness information, it's important to remember that I cannot replace professional medical advice. For symptoms or specific conditions, please consult a healthcare provider. How can I help with general wellness guidance?",
+      "Health is very important! General wellness tips include staying hydrated, eating nutritious foods, exercising regularly, and managing stress. For any specific symptoms or concerns, please seek professional medical advice. What wellness topic interests you?"
+    ];
+    
+    const dualResponses = [
+      "I'm your dual AI assistant for both career and health guidance! I can help with job searching, skill development, wellness tips, and general health information. Remember, for serious health issues, always consult healthcare professionals. What would you like to discuss?",
+      "Great question! Whether it's advancing your career or maintaining good health, I'm here to help. I can provide career advice, job market insights, wellness tips, and general health information. What specific area would you like to focus on?",
+      "As your comprehensive AI assistant, I can help with both professional growth and health guidance. For career topics, I provide actionable advice and market insights. For health, I share general wellness information while emphasizing professional medical consultation when needed. How can I assist you today?"
+    ];
+    
+    const responses = mode === 'career' ? careerResponses : mode === 'health' ? healthResponses : dualResponses;
+    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+    
+    return {
+      content: randomResponse,
+      metadata: {
+        mode,
+        confidence: 0.9,
+        suggestions: mode === 'career' 
+          ? ["Update your LinkedIn profile", "Learn a new skill", "Network with industry professionals"]
+          : mode === 'health'
+          ? ["Maintain regular exercise", "Eat balanced meals", "Get adequate sleep"]
+          : ["Focus on work-life balance", "Set career goals", "Prioritize self-care"],
+        urgency: 'low'
+      }
+    };
+  }
   
   async generateCareerResponse(message: string, context?: string[]): Promise<AIResponse> {
+    if (this.isDemoMode) {
+      console.log('Using demo mode for career response');
+      return this.generateDemoResponse(message, 'career');
+    }
+    
     const systemPrompt = `You are CareerBot, an expert AI career advisor. You provide personalized career guidance, job recommendations, skill assessments, interview preparation, and salary insights. Always be encouraging, professional, and data-driven in your responses.
 
 Context about current conversation: ${context ? context.join('\n') : 'This is the start of a new conversation.'}
@@ -66,6 +109,11 @@ Guidelines:
   }
 
   async generateHealthResponse(message: string, context?: string[]): Promise<AIResponse> {
+    if (this.isDemoMode) {
+      console.log('Using demo mode for health response');
+      return this.generateDemoResponse(message, 'health');
+    }
+    
     const systemPrompt = `You are HealthBot, an AI health advisor providing general wellness guidance and health information. You help with symptom analysis, health risk assessment, medication information, and wellness tips.
 
 IMPORTANT DISCLAIMERS:
@@ -120,6 +168,11 @@ Guidelines:
   }
 
   async generateDualResponse(message: string, context?: string[]): Promise<AIResponse> {
+    if (this.isDemoMode) {
+      console.log('Using demo mode for dual response');
+      return this.generateDemoResponse(message, 'dual');
+    }
+    
     const systemPrompt = `You are the AI Dual Assistant, capable of providing both career and health guidance. Analyze the user's message to determine whether they need career advice, health information, or both.
 
 Context about current conversation: ${context ? context.join('\n') : 'This is the start of a new conversation.'}

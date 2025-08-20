@@ -18,6 +18,8 @@ interface WebSocketMessage {
   content?: string;
   metadata?: any;
   conversationId?: string;
+  message?: string;
+  mode?: string;
 }
 
 export default function Chat() {
@@ -41,7 +43,7 @@ export default function Chat() {
         // Create AI message
         const aiMessage: Message = {
           id: Date.now().toString(),
-          conversationId: message.conversationId,
+          conversationId: message.conversationId || null,
           role: 'assistant',
           content: message.content || '',
           metadata: message.metadata,
@@ -93,9 +95,10 @@ export default function Chat() {
   useEffect(() => {
     const greeting: Message = {
       id: 'greeting',
-      conversationId: undefined,
+      conversationId: null,
       role: 'assistant',
       content: "Hello! I'm your AI assistant. I can help you with both career guidance and health advice. What would you like to discuss today?",
+      metadata: null,
       createdAt: new Date()
     };
     setMessages([greeting]);
@@ -108,9 +111,10 @@ export default function Chat() {
     // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
-      conversationId,
+      conversationId: conversationId || null,
       role: 'user',
       content: trimmedMessage,
+      metadata: null,
       createdAt: new Date()
     };
     
@@ -152,7 +156,7 @@ export default function Chat() {
         // Create AI message
         const aiMessage: Message = {
           id: (Date.now() + 1).toString(),
-          conversationId: conversationId,
+          conversationId: conversationId || null,
           role: 'assistant',
           content: aiResponse.content || 'Sorry, I encountered an error processing your request.',
           metadata: aiResponse.metadata,
@@ -193,7 +197,7 @@ export default function Chat() {
     
     const modeMessage: Message = {
       id: `mode-${Date.now()}`,
-      conversationId,
+      conversationId: conversationId || null,
       role: 'assistant',
       content: `I'm now in ${mode === 'career' ? 'CareerBot' : mode === 'health' ? 'HealthBot' : 'Dual AI'} mode. ${
         mode === 'career' 
@@ -202,6 +206,7 @@ export default function Chat() {
           ? 'I can provide health information and wellness guidance. Please remember to consult healthcare professionals for serious concerns.'
           : 'I can assist with both career and health topics.'
       } How can I help you?`,
+      metadata: null,
       createdAt: new Date()
     };
     
