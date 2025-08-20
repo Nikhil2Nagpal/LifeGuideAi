@@ -36,7 +36,7 @@ export default function Dashboard() {
               <i className="fas fa-brain text-white text-lg"></i>
             </div>
             <h1 className="text-2xl font-bold">
-              <span className="gradient-text-blue">MediCareer</span>
+              <span className="gradient-text-blue">LifeGuide</span>
               <span className="gradient-text-gold">AI</span>
             </h1>
           </div>
@@ -53,9 +53,13 @@ export default function Dashboard() {
             <Button
               variant="outline"
               className="glass-effect border-gray-600 hover:border-career-gold"
-              data-testid="button-settings"
+              onClick={() => toast({
+                title: "LifeGuide AI",
+                description: "Your revolutionary AI platform for career and health guidance!"
+              })}
+              data-testid="button-about"
             >
-              <i className="fas fa-cog mr-2"></i>Settings
+              <i className="fas fa-info-circle mr-2"></i>About
             </Button>
             <div className="w-8 h-8 bg-gradient-to-r from-career-gold to-medical-blue rounded-full"></div>
           </div>
@@ -256,7 +260,7 @@ export default function Dashboard() {
             <div className="w-8 h-8 bg-gradient-to-r from-medical-blue to-career-gold rounded-lg flex items-center justify-center">
               <i className="fas fa-brain text-white"></i>
             </div>
-            <span className="text-lg font-semibold">MediCareer AI</span>
+            <span className="text-lg font-semibold">LifeGuide AI</span>
           </div>
           <p className="text-gray-400 text-sm mb-4">
             Empowering your career and health decisions with advanced AI technology

@@ -1,10 +1,10 @@
 # LifeGuide AI - Revolutionary AI Platform
 
 ## Project Overview
-**LifeGuide AI** is a comprehensive AI-powered platform combining health diagnosis (MediMind AI) and career guidance in one innovative application. Built for the NxtWave + OpenAI Buildthon.
+**LifeGuide AI** is a comprehensive AI-powered platform combining health diagnosis and career guidance in one innovative application. Built for the NxtWave + OpenAI Buildthon.
 
 ## Key Features
-### MediMind AI Module
+### Health AI Module
 - AI-powered health diagnosis using OpenAI GPT-4
 - Symptom analysis and recommendations
 - Health risk assessment
@@ -49,7 +49,11 @@
 
 ## Recent Changes
 - Initial project setup and architecture planning
-- Combined MediMind AI and Career Guidance concepts
+- Combined Health AI and Career Guidance concepts
+- Fixed AI contextual responses - now responds correctly to specific questions like "fever", "skill development", "diet"
+- Made suggestion buttons clickable to fill input field
+- Changed branding from MediCareer AI to LifeGuide AI throughout the application
+- Replaced non-functional Settings button with working About button
 - Designed for NxtWave + OpenAI Buildthon competition
 
 ## Development Status
