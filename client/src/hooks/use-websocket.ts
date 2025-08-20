@@ -6,6 +6,7 @@ interface WebSocketMessage {
   metadata?: any;
   conversationId?: string;
   message?: string;
+  mode?: string;
 }
 
 interface UseWebSocketProps {
@@ -27,10 +28,18 @@ export function useWebSocket({ url, onMessage, onError, onOpen, onClose }: UseWe
     }
 
     setIsConnecting(true);
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
-    
-    wsRef.current = new WebSocket(wsUrl);
+    try {
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const wsUrl = `${protocol}//${window.location.host}/ws`;
+      console.log('Attempting WebSocket connection to:', wsUrl);
+      
+      wsRef.current = new WebSocket(wsUrl);
+    } catch (error) {
+      console.error('Failed to create WebSocket connection:', error);
+      setIsConnecting(false);
+      setIsConnected(false);
+      return;
+    }
 
     wsRef.current.onopen = () => {
       setIsConnected(true);

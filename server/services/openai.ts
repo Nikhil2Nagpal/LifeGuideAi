@@ -19,6 +19,58 @@ export class AIService {
   private isDemoMode = true; // Force demo mode due to API quota exceeded
   
   private generateDemoResponse(message: string, mode: 'career' | 'health' | 'dual'): AIResponse {
+    // Analyze the message for context-specific responses
+    const lowerMessage = message.toLowerCase();
+    
+    if (mode === 'career') {
+      if (lowerMessage.includes('12th') || lowerMessage.includes('after 12th') || lowerMessage.includes('stream')) {
+        return {
+          content: `Great question about your career path after 12th! Based on your interests in Engineering, Medical, Commerce, Arts, and IT, here's my analysis:
+
+**Engineering**: High demand, excellent salary prospects, especially in software, AI, and data science. Requires strong math and problem-solving skills.
+
+**Medical**: Prestigious field with job security, but requires 5-7 years of intensive study. Consider NEET preparation.
+
+**Commerce**: Versatile field leading to CA, MBA, finance careers. Good for business-minded students.
+
+**Arts**: Creative fields growing rapidly, especially digital arts, content creation, and media.
+
+**IT/Computer Science**: Highest growth potential, immediate job opportunities, can start earning while studying.
+
+**My Recommendation**: Given current market trends, consider Computer Science Engineering or IT for immediate opportunities, or Medical if you're passionate about healthcare. Which of these interests you most?`,
+          metadata: {
+            mode: 'career',
+            confidence: 0.95,
+            suggestions: ["Research college admission requirements", "Take aptitude tests", "Connect with professionals in chosen field"],
+            urgency: 'medium'
+          }
+        };
+      }
+      
+      if (lowerMessage.includes('engineering') || lowerMessage.includes('software') || lowerMessage.includes('developer')) {
+        return {
+          content: `Excellent choice for software engineering! Here's your roadmap:
+
+**Step 1**: Learn programming languages (Python, JavaScript, Java)
+**Step 2**: Build projects and create a GitHub portfolio
+**Step 3**: Practice coding on platforms like LeetCode, HackerRank
+**Step 4**: Apply for internships and entry-level positions
+**Step 5**: Continuously learn new technologies and frameworks
+
+Current market is very strong for software engineers with 40% job growth expected. Average starting salary is $70,000-$90,000.
+
+What programming languages are you currently familiar with?`,
+          metadata: {
+            mode: 'career',
+            confidence: 0.9,
+            suggestions: ["Start learning Python or JavaScript", "Build your first project", "Create LinkedIn profile"],
+            urgency: 'low'
+          }
+        };
+      }
+    }
+    
+    // Default responses as fallback
     const careerResponses = [
       "Based on your question, I recommend focusing on developing your technical skills and building a strong portfolio. Consider learning in-demand technologies like AI, cloud computing, or data analysis. Would you like specific suggestions for your field?",
       "Great career question! I'd suggest updating your resume to highlight your achievements with quantifiable results. Also, networking through LinkedIn and industry events can open many doors. What specific role are you targeting?",

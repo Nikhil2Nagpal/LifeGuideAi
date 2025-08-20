@@ -350,8 +350,11 @@ export default function Chat() {
                   variant="ghost"
                   size="sm"
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-medical-blue"
-                  onClick={() => handleSendMessage()}
-                  disabled={!inputValue.trim()}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }}
+                  disabled={!inputValue.trim() || isTyping}
                   data-testid="button-send-inline"
                 >
                   <i className="fas fa-paper-plane"></i>
@@ -359,9 +362,12 @@ export default function Chat() {
               </div>
               
               <Button
-                onClick={() => handleSendMessage()}
-                disabled={!inputValue.trim()}
-                className="bg-gradient-to-r from-medical-blue to-career-gold hover:from-medical-blue-dark hover:to-career-gold-dark text-white"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSendMessage();
+                }}
+                disabled={!inputValue.trim() || isTyping}
+                className="bg-gradient-to-r from-medical-blue to-career-gold hover:from-medical-blue-dark hover:to-career-gold-dark text-white disabled:opacity-50"
                 data-testid="button-send"
               >
                 <i className="fas fa-paper-plane mr-2"></i>
