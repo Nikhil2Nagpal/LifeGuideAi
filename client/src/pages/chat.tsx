@@ -32,7 +32,10 @@ export default function Chat() {
   const { isConnected, sendMessage } = useWebSocket({
     url: `/ws`,
     onMessage: (message: WebSocketMessage) => {
-      if (message.type === 'chat_response') {
+      console.log('Received message:', message);
+      if (message.type === 'connected') {
+        console.log('WebSocket connected successfully');
+      } else if (message.type === 'chat_response') {
         setIsTyping(false);
         
         // Create AI message
@@ -100,7 +103,7 @@ export default function Chat() {
 
   const handleSendMessage = useCallback(async (message: string = inputValue) => {
     const trimmedMessage = message.trim();
-    if (!trimmedMessage || !isConnected) return;
+    if (!trimmedMessage) return;
 
     // Add user message
     const userMessage: Message = {
@@ -115,14 +118,68 @@ export default function Chat() {
     setInputValue("");
     setIsTyping(true);
 
-    // Send via WebSocket
-    sendMessage({
-      type: 'chat',
-      message: trimmedMessage,
-      mode: currentMode,
-      conversationId
-    });
-  }, [inputValue, isConnected, sendMessage, currentMode, conversationId]);
+    try {
+      if (isConnected) {
+        // Send via WebSocket
+        sendMessage({
+          type: 'chat',
+          message: trimmedMessage,
+          mode: currentMode,
+          conversationId
+        });
+      } else {
+        // Fallback to REST API
+        console.log('WebSocket not connected, using REST API fallback');
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: trimmedMessage,
+            mode: currentMode,
+            conversationId
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to send message');
+        }
+
+        const aiResponse = await response.json();
+        setIsTyping(false);
+        
+        // Create AI message
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          conversationId: conversationId,
+          role: 'assistant',
+          content: aiResponse.content || 'Sorry, I encountered an error processing your request.',
+          metadata: aiResponse.metadata,
+          createdAt: new Date()
+        };
+        
+        setMessages(prev => [...prev, aiMessage]);
+        
+        // Handle emergency alerts
+        if (aiResponse.metadata?.urgency === 'emergency') {
+          toast({
+            title: "Emergency Alert",
+            description: "Please seek immediate medical attention.",
+            variant: "destructive"
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setIsTyping(false);
+      toast({
+        title: "Error",
+        description: "Failed to send your message. Please try again.",
+        variant: "destructive"
+      });
+    }
+  }, [inputValue, isConnected, sendMessage, currentMode, conversationId, toast]);
 
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -190,7 +247,7 @@ export default function Chat() {
                   {currentMode === 'career' ? 'CareerBot' : currentMode === 'health' ? 'HealthBot' : 'AI Assistant'}
                 </h1>
                 <p className="text-xs text-gray-400">
-                  {isConnected ? 'Online' : 'Connecting...'}
+                  {isConnected ? 'Real-time Chat Active' : 'Standard Chat Mode'}
                 </p>
               </div>
             </div>
@@ -281,7 +338,7 @@ export default function Chat() {
                   onKeyPress={handleKeyPress}
                   placeholder="Ask me about your career or health..."
                   className="glass-effect bg-transparent border-gray-600 text-white placeholder-gray-400 focus:border-medical-blue pr-12"
-                  disabled={!isConnected}
+                  disabled={false}
                   data-testid="input-chat"
                 />
                 <Button
@@ -289,7 +346,7 @@ export default function Chat() {
                   size="sm"
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-medical-blue"
                   onClick={() => handleSendMessage()}
-                  disabled={!inputValue.trim() || !isConnected}
+                  disabled={!inputValue.trim()}
                   data-testid="button-send-inline"
                 >
                   <i className="fas fa-paper-plane"></i>
@@ -298,7 +355,7 @@ export default function Chat() {
               
               <Button
                 onClick={() => handleSendMessage()}
-                disabled={!inputValue.trim() || !isConnected}
+                disabled={!inputValue.trim()}
                 className="bg-gradient-to-r from-medical-blue to-career-gold hover:from-medical-blue-dark hover:to-career-gold-dark text-white"
                 data-testid="button-send"
               >

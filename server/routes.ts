@@ -23,9 +23,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const clientId = Math.random().toString(36).substring(7);
     clients.set(clientId, ws);
     
+    // Auto-assign a default user for demo purposes
+    ws.userId = 'demo-user-' + clientId;
+    
+    console.log(`WebSocket client connected: ${clientId}`);
+    
+    // Send connection confirmation
+    ws.send(JSON.stringify({
+      type: 'connected',
+      message: 'WebSocket connection established'
+    }));
+    
     ws.on('message', async (data) => {
       try {
         const message = JSON.parse(data.toString());
+        console.log('Received WebSocket message:', message);
         
         if (message.type === 'chat') {
           const { message: userMessage, mode, conversationId } = message;
