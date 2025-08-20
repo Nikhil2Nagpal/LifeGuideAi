@@ -104,10 +104,36 @@ What specific career challenge are you facing right now?`,
       "Welcome! I'm your career advisor ready to help with job searching, professional development, salary negotiations, and career planning. What brings you here today?"
     ];
     
+    // More specific health responses
+    if (mode === 'health') {
+      if (lowerMessage.includes('headache') || lowerMessage.includes('pain') || lowerMessage.includes('hurt')) {
+        return {
+          content: `I understand you're experiencing discomfort. Here are some general wellness tips for common issues:
+
+**For Headaches:**
+- Stay hydrated (drink plenty of water)
+- Get adequate rest and sleep
+- Reduce screen time and eye strain
+- Try gentle neck and shoulder stretches
+- Manage stress through relaxation techniques
+
+**Important:** If pain is severe, persistent, or accompanied by other symptoms, please consult a healthcare professional immediately.
+
+What specific area of wellness would you like to focus on?`,
+          metadata: {
+            mode: 'health',
+            confidence: 0.9,
+            suggestions: ["Stay hydrated", "Get adequate rest", "Consult healthcare provider if severe"],
+            urgency: 'medium'
+          }
+        };
+      }
+    }
+    
     const healthResponses = [
-      "Thank you for your health question. For general wellness, maintaining a balanced diet, regular exercise, and adequate sleep are fundamental. However, for specific health concerns, please consult with a healthcare professional. What aspect of health would you like to discuss?",
-      "I understand your health concern. While I can provide general wellness information, it's important to remember that I cannot replace professional medical advice. For symptoms or specific conditions, please consult a healthcare provider. How can I help with general wellness guidance?",
-      "Health is very important! General wellness tips include staying hydrated, eating nutritious foods, exercising regularly, and managing stress. For any specific symptoms or concerns, please seek professional medical advice. What wellness topic interests you?"
+      "Thank you for your health question! I can provide general wellness information to help you maintain good health. For specific medical concerns, please consult a healthcare professional. What aspect of wellness interests you?",
+      "I'm here to help with general health and wellness guidance! I can share information about nutrition, exercise, sleep, and stress management. For medical symptoms or conditions, please consult your doctor. What would you like to discuss?",
+      "Health and wellness are so important! I can provide general information about healthy living, preventive care, and lifestyle tips. Remember, for specific health concerns, always consult healthcare professionals. How can I help with your wellness journey?"
     ];
     
     const dualResponses = [

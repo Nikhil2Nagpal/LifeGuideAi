@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "wouter";
-import { useWebSocket } from "@/hooks/use-websocket";
 import { useVoice } from "@/hooks/use-voice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,53 +30,9 @@ export default function Chat() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
-  const { isConnected, sendMessage } = useWebSocket({
-    url: `/ws`,
-    onMessage: (message: WebSocketMessage) => {
-      console.log('Received message:', message);
-      if (message.type === 'connected') {
-        console.log('WebSocket connected successfully');
-      } else if (message.type === 'chat_response') {
-        setIsTyping(false);
-        
-        // Create AI message
-        const aiMessage: Message = {
-          id: Date.now().toString(),
-          conversationId: message.conversationId || null,
-          role: 'assistant',
-          content: message.content || '',
-          metadata: message.metadata,
-          createdAt: new Date()
-        };
-        
-        setMessages(prev => [...prev, aiMessage]);
-        setConversationId(message.conversationId);
-        
-        // Handle emergency alerts
-        if (message.metadata?.urgency === 'emergency') {
-          toast({
-            title: "Emergency Alert",
-            description: "Please seek immediate medical attention.",
-            variant: "destructive"
-          });
-        }
-      } else if (message.type === 'error') {
-        setIsTyping(false);
-        toast({
-          title: "Error",
-          description: "Failed to process your message. Please try again.",
-          variant: "destructive"
-        });
-      }
-    },
-    onError: () => {
-      toast({
-        title: "Connection Error",
-        description: "Unable to connect to AI assistant.",
-        variant: "destructive"
-      });
-    }
-  });
+  // Disable WebSocket to avoid connection errors - use REST API only
+  const isConnected = false;
+  const sendMessage = () => {};
 
   const { speak } = useVoice();
 
