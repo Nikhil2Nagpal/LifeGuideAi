@@ -1,0 +1,649 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Dual Assistant - CareerBot & HealthBot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'medical-blue': '#0ea5e9',
+                        'medical-blue-dark': '#0284c7',
+                        'career-gold': '#fbbf24',
+                        'career-gold-dark': '#f59e0b',
+                        'dark-bg': '#0f172a',
+                        'dark-card': '#1e293b',
+                        'glass': 'rgba(255,255,255,0.1)',
+                        'neon-blue': '#00d4ff',
+                        'neon-gold': '#ffd700'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif']
+                    },
+                    backdropBlur: {
+                        'xs': '2px'
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .neon-glow-blue {
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .neon-glow-gold {
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+        
+        .typing-animation::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .gradient-text-blue {
+            background: linear-gradient(135deg, #0ea5e9, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-text-gold {
+            background: linear-gradient(135deg, #fbbf24, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .chat-bubble-user {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        }
+        
+        .chat-bubble-bot {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .voice-pulse {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-dark-bg text-white">
+
+    <!-- @COMPONENT: Navigation -->
+    <nav class="glass-effect sticky top-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <!-- AI brain futuristic icon -->
+                <div class="w-10 h-10 bg-gradient-to-r from-medical-blue to-career-gold rounded-lg flex items-center justify-center">
+                    <i class="fas fa-brain text-white text-lg"></i>
+                </div>
+                <h1 class="text-2xl font-bold">
+                    <span class="gradient-text-blue">AI</span>
+                    <span class="gradient-text-gold">Assistant</span>
+                </h1>
+            </div>
+            
+            <div class="flex items-center space-x-6">
+                <button class="glass-effect px-4 py-2 rounded-lg hover:neon-glow-blue transition-all duration-300" data-event="click:switchMode">
+                    <i class="fas fa-exchange-alt mr-2"></i>Switch Mode
+                </button>
+                <button class="glass-effect px-4 py-2 rounded-lg hover:neon-glow-gold transition-all duration-300">
+                    <i class="fas fa-cog mr-2"></i>Settings
+                </button>
+                <div class="w-8 h-8 bg-gradient-to-r from-career-gold to-medical-blue rounded-full"></div>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: Navigation -->
+
+    <!-- @COMPONENT: Main Dashboard -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        
+        <!-- Welcome Section -->
+        <div class="text-center mb-12">
+            <h2 class="text-5xl font-bold mb-4">
+                Welcome to Your
+                <span class="gradient-text-blue">Dual AI</span>
+                <span class="gradient-text-gold">Assistant</span>
+            </h2>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                Get personalized career guidance and health insights powered by advanced AI technology
+            </p>
+        </div>
+
+        <!-- Dual Assistant Cards -->
+        <div class="grid lg:grid-cols-2 gap-8 mb-12">
+            
+            <!-- @COMPONENT: CareerBot Card -->
+            <div class="glass-effect rounded-2xl p-8 hover:neon-glow-gold transition-all duration-500 cursor-pointer group" data-event="click:activateCareerBot">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-4">
+                        <!-- Career guidance consultation image -->
+                        <div class="w-16 h-16 bg-gradient-to-r from-career-gold to-career-gold-dark rounded-2xl flex items-center justify-center float-animation">
+                            <i class="fas fa-briefcase text-2xl text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold gradient-text-gold">CareerBot</h3>
+                            <p class="text-gray-300">Your AI Career Advisor</p>
+                        </div>
+                    </div>
+                    <div class="text-career-gold group-hover:scale-110 transition-transform">
+                        <i class="fas fa-arrow-right text-2xl"></i>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 mb-6">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-chart-line text-career-gold"></i>
+                        <span>Skill Assessment & Gap Analysis</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-search text-career-gold"></i>
+                        <span>Job Recommendations & Market Insights</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-microphone text-career-gold"></i>
+                        <span>Interview Preparation & Practice</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-dollar-sign text-career-gold"></i>
+                        <span>Salary Insights & Negotiation</span>
+                    </div>
+                </div>
+                
+                <div class="glass-effect rounded-lg p-4">
+                    <p class="text-sm text-gray-300 italic">
+                        "Get personalized career guidance based on current market trends and your unique skills."
+                    </p>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: CareerBot Card -->
+
+            <!-- @COMPONENT: HealthBot Card -->
+            <div class="glass-effect rounded-2xl p-8 hover:neon-glow-blue transition-all duration-500 cursor-pointer group" data-event="click:activateHealthBot">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-4">
+                        <!-- Medical diagnosis technology image -->
+                        <div class="w-16 h-16 bg-gradient-to-r from-medical-blue to-medical-blue-dark rounded-2xl flex items-center justify-center float-animation">
+                            <i class="fas fa-heartbeat text-2xl text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold gradient-text-blue">HealthBot</h3>
+                            <p class="text-gray-300">Your AI Health Advisor</p>
+                        </div>
+                    </div>
+                    <div class="text-medical-blue group-hover:scale-110 transition-transform">
+                        <i class="fas fa-arrow-right text-2xl"></i>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 mb-6">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-stethoscope text-medical-blue"></i>
+                        <span>Symptom Analysis & Assessment</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-shield-alt text-medical-blue"></i>
+                        <span>Health Risk Assessment</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-pills text-medical-blue"></i>
+                        <span>Medication Guidance & Reminders</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-exclamation-triangle text-medical-blue"></i>
+                        <span>Emergency Health Alerts</span>
+                    </div>
+                </div>
+                
+                <div class="glass-effect rounded-lg p-4">
+                    <p class="text-sm text-gray-300 italic">
+                        "Get AI-powered health insights and personalized wellness recommendations."
+                    </p>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: HealthBot Card -->
+        </div>
+
+        <!-- @COMPONENT: AI Chat Interface -->
+        <div class="glass-effect rounded-2xl p-8 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-bold">AI Chat Assistant</h3>
+                <div class="flex items-center space-x-4">
+                    <!-- Voice Control Button -->
+                    <button class="glass-effect w-12 h-12 rounded-full flex items-center justify-center hover:neon-glow-blue transition-all duration-300 voice-pulse" data-event="click:toggleVoice">
+                        <i class="fas fa-microphone text-medical-blue"></i>
+                    </button>
+                    <!-- Language Selector -->
+                    <select class="glass-effect rounded-lg px-3 py-2 bg-transparent border border-gray-600 text-white">
+                        <option value="en">English</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="de">Deutsch</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Chat Messages -->
+            <!-- @STATE: messages:array = [] -->
+            <div class="space-y-4 mb-6 max-h-96 overflow-y-auto" data-bind="chatMessages">
+                
+                <!-- Sample Bot Message -->
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-gradient-to-r from-medical-blue to-career-gold rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-white text-sm"></i>
+                    </div>
+                    <div class="chat-bubble-bot rounded-2xl px-4 py-3 max-w-xs">
+                        <p class="text-sm">Hello! I'm your AI assistant. I can help you with both career guidance and health advice. What would you like to discuss today?</p>
+                    </div>
+                </div>
+                
+                <!-- Sample User Message -->
+                <div class="flex items-start space-x-3 justify-end">
+                    <div class="chat-bubble-user rounded-2xl px-4 py-3 max-w-xs">
+                        <p class="text-sm text-white">I'm looking for career advice about transitioning into tech.</p>
+                    </div>
+                    <div class="w-8 h-8 bg-gradient-to-r from-career-gold to-medical-blue rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user text-white text-sm"></i>
+                    </div>
+                </div>
+                
+                <!-- Typing Indicator -->
+                <div class="flex items-start space-x-3" data-show="isTyping">
+                    <div class="w-8 h-8 bg-gradient-to-r from-medical-blue to-career-gold rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-white text-sm"></i>
+                    </div>
+                    <div class="chat-bubble-bot rounded-2xl px-4 py-3">
+                        <div class="flex space-x-1">
+                            <div class="w-2 h-2 bg-white rounded-full animate-bounce"></div>
+                            <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 0.1s;"></div>
+                            <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chat Input -->
+            <div class="flex items-center space-x-4">
+                <div class="flex-1 relative">
+                    <input 
+                        type="text" 
+                        placeholder="Ask me about your career or health..." 
+                        class="w-full glass-effect rounded-xl px-4 py-3 bg-transparent border border-gray-600 text-white placeholder-gray-400 focus:border-medical-blue focus:outline-none transition-colors"
+                        data-bind="chatInput"
+                        data-event="keypress:handleEnter"
+                    />
+                    <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-medical-blue transition-colors" data-event="click:sendMessage">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <button class="bg-gradient-to-r from-medical-blue to-career-gold rounded-xl px-6 py-3 font-medium hover:scale-105 transition-transform duration-300" data-event="click:sendMessage">
+                    Send
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: AI Chat Interface -->
+
+        <!-- @COMPONENT: Quick Actions Dashboard -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="glass-effect rounded-xl p-6 text-center hover:neon-glow-gold transition-all duration-300 cursor-pointer" data-event="click:skillAssessment">
+                <div class="w-12 h-12 bg-gradient-to-r from-career-gold to-career-gold-dark rounded-lg mx-auto mb-4 flex items-center justify-center">
+                    <i class="fas fa-tasks text-white"></i>
+                </div>
+                <h4 class="font-semibold mb-2">Skill Assessment</h4>
+                <p class="text-sm text-gray-400">Evaluate your current skills</p>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6 text-center hover:neon-glow-blue transition-all duration-300 cursor-pointer" data-event="click:healthCheck">
+                <div class="w-12 h-12 bg-gradient-to-r from-medical-blue to-medical-blue-dark rounded-lg mx-auto mb-4 flex items-center justify-center">
+                    <i class="fas fa-heart text-white"></i>
+                </div>
+                <h4 class="font-semibold mb-2">Health Check</h4>
+                <p class="text-sm text-gray-400">Quick health assessment</p>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6 text-center hover:neon-glow-gold transition-all duration-300 cursor-pointer" data-event="click:jobSearch">
+                <div class="w-12 h-12 bg-gradient-to-r from-career-gold to-career-gold-dark rounded-lg mx-auto mb-4 flex items-center justify-center">
+                    <i class="fas fa-search text-white"></i>
+                </div>
+                <h4 class="font-semibold mb-2">Job Search</h4>
+                <p class="text-sm text-gray-400">Find matching opportunities</p>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6 text-center hover:neon-glow-blue transition-all duration-300 cursor-pointer" data-event="click:generateReport">
+                <div class="w-12 h-12 bg-gradient-to-r from-medical-blue to-medical-blue-dark rounded-lg mx-auto mb-4 flex items-center justify-center">
+                    <i class="fas fa-file-pdf text-white"></i>
+                </div>
+                <h4 class="font-semibold mb-2">Generate Report</h4>
+                <p class="text-sm text-gray-400">Export AI insights</p>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: Quick Actions Dashboard -->
+
+        <!-- @COMPONENT: Recent Activity & Insights -->
+        <div class="grid lg:grid-cols-3 gap-8">
+            
+            <!-- Recent Conversations -->
+            <div class="glass-effect rounded-xl p-6">
+                <h4 class="text-lg font-semibold mb-4 flex items-center">
+                    <i class="fas fa-clock text-medical-blue mr-2"></i>
+                    Recent Conversations
+                </h4>
+                <div class="space-y-3">
+                    <div class="glass-effect rounded-lg p-3 cursor-pointer hover:bg-opacity-20 transition-colors" data-mock="true">
+                        <p class="text-sm font-medium">Career transition advice</p>
+                        <p class="text-xs text-gray-400">2 hours ago</p>
+                    </div>
+                    <div class="glass-effect rounded-lg p-3 cursor-pointer hover:bg-opacity-20 transition-colors" data-mock="true">
+                        <p class="text-sm font-medium">Health symptom check</p>
+                        <p class="text-xs text-gray-400">1 day ago</p>
+                    </div>
+                    <div class="glass-effect rounded-lg p-3 cursor-pointer hover:bg-opacity-20 transition-colors" data-mock="true">
+                        <p class="text-sm font-medium">Interview preparation</p>
+                        <p class="text-xs text-gray-400">3 days ago</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI Insights -->
+            <div class="glass-effect rounded-xl p-6">
+                <h4 class="text-lg font-semibold mb-4 flex items-center">
+                    <i class="fas fa-lightbulb text-career-gold mr-2"></i>
+                    AI Insights
+                </h4>
+                <div class="space-y-4">
+                    <div class="border-l-4 border-career-gold pl-3" data-mock="true">
+                        <p class="text-sm font-medium">Career Growth</p>
+                        <p class="text-xs text-gray-400">Focus on cloud computing skills for 23% salary increase potential</p>
+                    </div>
+                    <div class="border-l-4 border-medical-blue pl-3" data-mock="true">
+                        <p class="text-sm font-medium">Health Trend</p>
+                        <p class="text-xs text-gray-400">Your stress levels correlate with busy work periods</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="glass-effect rounded-xl p-6">
+                <h4 class="text-lg font-semibold mb-4 flex items-center">
+                    <i class="fas fa-chart-bar text-neon-blue mr-2"></i>
+                    Your Progress
+                </h4>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span>Career Goals</span>
+                            <span data-mock="true">73%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-career-gold to-career-gold-dark h-2 rounded-full" style="width: 73%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span>Health Score</span>
+                            <span data-mock="true">85%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-medical-blue to-medical-blue-dark h-2 rounded-full" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: Recent Activity & Insights -->
+
+    </main>
+    <!-- @END_COMPONENT: Main Dashboard -->
+
+    <!-- @COMPONENT: Footer -->
+    <footer class="mt-16 bg-dark-card bg-opacity-50 py-8">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="flex items-center justify-center space-x-3 mb-4">
+                <div class="w-8 h-8 bg-gradient-to-r from-medical-blue to-career-gold rounded-lg flex items-center justify-center">
+                    <i class="fas fa-brain text-white"></i>
+                </div>
+                <span class="text-lg font-semibold">AI Dual Assistant</span>
+            </div>
+            <p class="text-gray-400 text-sm mb-4">
+                Empowering your career and health decisions with advanced AI technology
+            </p>
+            <div class="flex justify-center space-x-6 text-sm text-gray-400">
+                <a href="#" class="hover:text-medical-blue transition-colors">Privacy Policy</a>
+                <a href="#" class="hover:text-career-gold transition-colors">Terms of Service</a>
+                <a href="#" class="hover:text-neon-blue transition-colors">Support</a>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <script>
+        (function() {
+            // TODO: Implement OpenAI API integration for ChatGPT functionality
+            // TODO: Implement voice recognition and synthesis
+            // TODO: Implement real-time chat functionality
+            // TODO: Implement context switching between CareerBot and HealthBot
+            // TODO: Implement PDF report generation
+            // TODO: Implement emergency health alerts system
+            
+            // Mock interactive functionality for demonstration
+            let currentMode = 'dual'; // 'career', 'health', or 'dual'
+            let isVoiceActive = false;
+            let isTyping = false;
+            
+            // Chat functionality
+            function initializeChat() {
+                const chatInput = document.querySelector('[data-bind="chatInput"]');
+                const sendButtons = document.querySelectorAll('[data-event*="sendMessage"]');
+                
+                function sendMessage() {
+                    const message = chatInput.value.trim();
+                    if (!message) return;
+                    
+                    // Add user message to chat
+                    addChatMessage(message, 'user');
+                    chatInput.value = '';
+                    
+                    // Simulate AI response
+                    setTimeout(() => {
+                        showTyping();
+                        setTimeout(() => {
+                            hideTyping();
+                            addChatMessage(generateAIResponse(message), 'bot');
+                        }, 2000);
+                    }, 500);
+                }
+                
+                // Event listeners
+                sendButtons.forEach(btn => {
+                    btn.addEventListener('click', sendMessage);
+                });
+                
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+            
+            function addChatMessage(message, sender) {
+                const chatContainer = document.querySelector('[data-bind="chatMessages"]');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `flex items-start space-x-3 ${sender === 'user' ? 'justify-end' : ''}`;
+                
+                if (sender === 'user') {
+                    messageDiv.innerHTML = `
+                        <div class="chat-bubble-user rounded-2xl px-4 py-3 max-w-xs">
+                            <p class="text-sm text-white">${message}</p>
+                        </div>
+                        <div class="w-8 h-8 bg-gradient-to-r from-career-gold to-medical-blue rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-user text-white text-sm"></i>
+                        </div>
+                    `;
+                } else {
+                    messageDiv.innerHTML = `
+                        <div class="w-8 h-8 bg-gradient-to-r from-medical-blue to-career-gold rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-white text-sm"></i>
+                        </div>
+                        <div class="chat-bubble-bot rounded-2xl px-4 py-3 max-w-xs">
+                            <p class="text-sm">${message}</p>
+                        </div>
+                    `;
+                }
+                
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+            
+            function generateAIResponse(userMessage) {
+                // Mock AI responses based on keywords
+                const message = userMessage.toLowerCase();
+                
+                if (message.includes('career') || message.includes('job') || message.includes('work')) {
+                    return "I can help you with career guidance! Based on current market trends, I'd recommend focusing on in-demand skills like cloud computing, data analysis, and AI. Would you like me to create a personalized career development plan for you?";
+                } else if (message.includes('health') || message.includes('symptom') || message.includes('feel')) {
+                    return "I'm here to help with your health concerns. Please note that I provide general guidance and you should always consult with healthcare professionals for serious symptoms. What specific health topic would you like to discuss?";
+                } else {
+                    return "I'm your dual AI assistant specializing in both career and health advice. How can I help you today? You can ask me about job opportunities, skill development, health symptoms, or wellness tips.";
+                }
+            }
+            
+            function showTyping() {
+                const typingIndicator = document.querySelector('[data-show="isTyping"]');
+                if (typingIndicator) {
+                    typingIndicator.style.display = 'flex';
+                    isTyping = true;
+                }
+            }
+            
+            function hideTyping() {
+                const typingIndicator = document.querySelector('[data-show="isTyping"]');
+                if (typingIndicator) {
+                    typingIndicator.style.display = 'none';
+                    isTyping = false;
+                }
+            }
+            
+            // Voice control
+            function toggleVoice() {
+                isVoiceActive = !isVoiceActive;
+                const voiceBtn = document.querySelector('[data-event*="toggleVoice"]');
+                
+                if (isVoiceActive) {
+                    voiceBtn.classList.add('neon-glow-blue');
+                    voiceBtn.innerHTML = '<i class="fas fa-microphone-slash text-medical-blue"></i>';
+                    // TODO: Start voice recognition
+                } else {
+                    voiceBtn.classList.remove('neon-glow-blue');
+                    voiceBtn.innerHTML = '<i class="fas fa-microphone text-medical-blue"></i>';
+                    // TODO: Stop voice recognition
+                }
+            }
+            
+            // Mode switching
+            function switchMode() {
+                // TODO: Implement context switching between CareerBot and HealthBot
+                console.log('Switching AI mode...');
+            }
+            
+            // Quick actions
+            function skillAssessment() {
+                addChatMessage("I'd like to take a skill assessment", 'user');
+                setTimeout(() => {
+                    addChatMessage("Great! I'll guide you through a comprehensive skill assessment. This will help identify your strengths and areas for improvement. Let's start with your current role and industry.", 'bot');
+                }, 1000);
+            }
+            
+            function healthCheck() {
+                addChatMessage("I want to do a quick health check", 'user');
+                setTimeout(() => {
+                    addChatMessage("I'll help you with a health assessment. Please remember this is for general guidance only. How are you feeling today, and are there any specific symptoms or concerns you'd like to discuss?", 'bot');
+                }, 1000);
+            }
+            
+            function jobSearch() {
+                addChatMessage("Help me find job opportunities", 'user');
+                setTimeout(() => {
+                    addChatMessage("I'll help you find relevant job opportunities based on your skills and preferences. What type of role and industry are you interested in? Also, what's your experience level?", 'bot');
+                }, 1000);
+            }
+            
+            function generateReport() {
+                // TODO: Implement PDF report generation
+                alert('AI Report generation feature coming soon! This will create personalized PDF reports with your career insights and health recommendations.');
+            }
+            
+            // Event listeners for all interactive elements
+            document.addEventListener('DOMContentLoaded', function() {
+                initializeChat();
+                hideTyping(); // Hide typing indicator initially
+                
+                // Add event listeners for all data-event elements
+                document.querySelector('[data-event*="toggleVoice"]')?.addEventListener('click', toggleVoice);
+                document.querySelector('[data-event*="switchMode"]')?.addEventListener('click', switchMode);
+                document.querySelector('[data-event*="skillAssessment"]')?.addEventListener('click', skillAssessment);
+                document.querySelector('[data-event*="healthCheck"]')?.addEventListener('click', healthCheck);
+                document.querySelector('[data-event*="jobSearch"]')?.addEventListener('click', jobSearch);
+                document.querySelector('[data-event*="generateReport"]')?.addEventListener('click', generateReport);
+                
+                // Activate specific bot modes
+                document.querySelector('[data-event*="activateCareerBot"]')?.addEventListener('click', function() {
+                    currentMode = 'career';
+                    addChatMessage("I'm interested in career guidance", 'user');
+                    setTimeout(() => {
+                        addChatMessage("Perfect! I'm now in CareerBot mode. I can help you with skill development, job searching, interview preparation, and salary negotiations. What career topic interests you most?", 'bot');
+                    }, 1000);
+                });
+                
+                document.querySelector('[data-event*="activateHealthBot"]')?.addEventListener('click', function() {
+                    currentMode = 'health';
+                    addChatMessage("I need health advice", 'user');
+                    setTimeout(() => {
+                        addChatMessage("I'm now in HealthBot mode. I can help with symptom analysis, health risk assessment, and wellness guidance. Please remember to consult healthcare professionals for serious concerns. How can I assist you today?", 'bot');
+                    }, 1000);
+                });
+            });
+            
+        })();
+    </script>
+</body>
+</html>
